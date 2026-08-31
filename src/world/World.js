@@ -62,6 +62,7 @@ export class World {
     this.consensusPhase = 0;
     this.nodeReveal = 0;
 
+    this.attractTarget = new THREE.Vector4(0, 0, 0, 0);
     this.raycaster = new THREE.Raycaster();
     this.ndc = new THREE.Vector2();
     this.hovered = null;
@@ -257,6 +258,15 @@ export class World {
     this.terrain.update(this.camera);
     this.dust.update(this.camera);
     this.glyphs.update(this.camera);
+
+    // the hover reaction eases in and out rather than snapping on
+    const at = this.dust.uniforms.uAttract.value, tt = this.attractTarget;
+    if (tt.w > 0) {
+      at.x = damp(at.x, tt.x, 7, dt);
+      at.y = damp(at.y, tt.y, 7, dt);
+      at.z = damp(at.z, tt.z, 7, dt);
+    }
+    at.w = damp(at.w, tt.w, 3.2, dt);
     // the final pull-back should feel like more of the network, not less
     this.dust.uniforms.uOpacity.value = 1 + smoothstep(0.86, 1.0, this.scrollT) * 0.5;
 
@@ -370,7 +380,15 @@ export class World {
 
     // applications
     S.appsA = near('s08');
-    S.appIndex = clamp(g('s08'), 0, 1) * 4;
+    // Which application the camera is alongside, read off the camera's own
+    // position rather than mapped from scroll. The lateral pass eases in and
+    // out, so any formula drifts out of step with what is actually in frame.
+    const apps = this.landmarks.apps;
+    if (apps.length > 1) {
+      const x0 = apps[0].group.position.x;
+      const step = apps[1].group.position.x - x0;
+      S.appIndex = clamp((this.camera.position.x - x0) / step, 0, apps.length - 1);
+    }
 
     // the live section drives the data harder through every pathway
     const live = near('live');
@@ -400,9 +418,8 @@ export class World {
       this.onHover({ label: entry.label, x: this.mouse.px, y: this.mouse.py });
     }
 
-    const a = this.dust.uniforms.uAttract.value;
-    if (hit) a.set(hit.point.x, hit.point.y, hit.point.z, 1);
-    else a.w = damp(a.w, 0, 6, 0.1);
+    if (hit) this.attractTarget.set(hit.point.x, hit.point.y, hit.point.z, 1);
+    else this.attractTarget.w = 0;
   }
 
   // ── sizing ──────────────────────────────────────────────────────────

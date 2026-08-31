@@ -404,7 +404,7 @@ function buildApplications(scene, fogU, rng) {
     group.position.set(L.x + XS[i], baseY, L.z);
     scene.add(group);
 
-    const geos = [];
+    const geos = new Set();
     const subs = [];
     let primary = null;
 
@@ -414,7 +414,7 @@ function buildApplications(scene, fogU, rng) {
       if (scale) m.scale.copy(scale);
       if (rot) m.rotation.copy(rot);
       group.add(m);
-      geos.push(geo);
+      geos.add(geo);
       if (!primary) primary = m;
       return m;
     };
@@ -440,26 +440,86 @@ function buildApplications(scene, fogU, rng) {
         subs.push({ tick: (dt, t) => { m.position.y += Math.sin(t * 1.1 + k) * dt * 1.4; } });
       }
     } else if (i === 2) {
-      // DIGITAL IDENTITY — a shell around a private core
-      add(new THREE.IcosahedronGeometry(1, 1), new THREE.Vector3(0, 0, 0), new THREE.Vector3(14, 14, 14));
-      const core = add(new THREE.OctahedronGeometry(1, 0), new THREE.Vector3(0, 0, 0), new THREE.Vector3(6, 8, 6));
-      subs.push({ tick: (dt, t) => { core.rotation.y -= dt * 0.5; core.rotation.x += dt * 0.28; } });
-    } else if (i === 3) {
-      // SMART CONTRACTS — interlocking rings that execute together
-      const r1 = add(new THREE.TorusGeometry(1, 0.19, 8, 44), new THREE.Vector3(-5, 0, 0), new THREE.Vector3(11, 11, 11));
-      const r2 = add(new THREE.TorusGeometry(1, 0.19, 8, 44), new THREE.Vector3(6, 0, 0),
-        new THREE.Vector3(9, 9, 9), new THREE.Euler(0, Math.PI / 2.2, 0));
-      add(new THREE.BoxGeometry(1, 1, 1), new THREE.Vector3(0, -14, 0), new THREE.Vector3(20, 1.4, 12));
-      subs.push({ tick: (dt) => { r1.rotation.z += dt * 0.42; r2.rotation.z -= dt * 0.42; } });
-    } else {
-      // DIGITAL ASSETS — a cut gem holding value
-      add(new THREE.OctahedronGeometry(1, 0), new THREE.Vector3(0, 0, 0), new THREE.Vector3(12, 17, 12));
+      // DIGITAL IDENTITY — a credential: portrait panel, data lines, and a
+      // verification ring that keeps turning against it
+      const box = new THREE.BoxGeometry(1, 1, 1);
+      add(box, new THREE.Vector3(0, 0, 0), new THREE.Vector3(19, 25, 1.6));           // card
+      add(box, new THREE.Vector3(-5, 6, 1.1), new THREE.Vector3(7.5, 8.5, 0.7));      // portrait
+      add(box, new THREE.Vector3(5.5, 2.6, 1.1), new THREE.Vector3(4.6, 3.2, 0.7));   // chip
       for (let k = 0; k < 4; k++) {
-        const a = (k / 4) * Math.PI * 2;
-        const m = add(new THREE.BoxGeometry(1, 1, 1),
-          new THREE.Vector3(Math.cos(a) * 19, -4, Math.sin(a) * 19),
-          new THREE.Vector3(3.4, 3.4, 3.4), new THREE.Euler(0, a, 0));
-        subs.push({ tick: (dt, t) => { m.position.y = -4 + Math.sin(t * 0.8 + k * 1.6) * 3.4; } });
+        add(box, new THREE.Vector3(-1.4 - k * 0.9, -4.4 - k * 2.6, 1.1),
+          new THREE.Vector3(12.4 - k * 1.8, 0.85, 0.6));                              // data lines
+      }
+      const ring = add(new THREE.TorusGeometry(1, 0.09, 6, 64),
+        new THREE.Vector3(6.4, -8.6, 2.2), new THREE.Vector3(5.6, 5.6, 5.6));         // verified
+      subs.push({ tick: (dt) => { ring.rotation.z += dt * 0.7; } });
+
+    } else if (i === 3) {
+      // SMART CONTRACTS — a signed document driving a pair of meshed gears:
+      // an agreement that executes itself
+      const box = new THREE.BoxGeometry(1, 1, 1);
+      add(box, new THREE.Vector3(-7, 0, 0), new THREE.Vector3(17, 22, 1.4));          // document
+      for (let k = 0; k < 5; k++) {
+        add(box, new THREE.Vector3(-8.4 + (k % 2) * 1.2, 6.5 - k * 3.0, 1.0),
+          new THREE.Vector3(11.5 - (k % 2) * 2.4, 0.8, 0.6));                         // clauses
+      }
+      add(new THREE.CylinderGeometry(1, 1, 1, 18),
+        new THREE.Vector3(-11.5, -8.4, 1.2), new THREE.Vector3(2.6, 0.8, 2.6),
+        new THREE.Euler(Math.PI / 2, 0, 0));                                          // seal
+
+      const gear = (cx, cy, r, teeth, dir) => {
+        const g = new THREE.Group();
+        const hub = new THREE.Mesh(new THREE.TorusGeometry(1, 0.30, 8, 40), mat);
+        hub.scale.setScalar(r);
+        g.add(hub);
+        geos.add(hub.geometry);
+        for (let k = 0; k < teeth; k++) {
+          const a = (k / teeth) * Math.PI * 2;
+          const t = new THREE.Mesh(box, mat);
+          t.position.set(Math.cos(a) * r, Math.sin(a) * r, 0);
+          t.scale.set(r * 0.30, r * 0.30, r * 0.34);
+          t.rotation.z = a;
+          g.add(t);
+        }
+        g.position.set(cx, cy, 0);
+        group.add(g);
+        subs.push({ tick: (dt) => { g.rotation.z += dt * 0.55 * dir; } });
+        return g;
+      };
+      gear(9, 3.5, 7.5, 10, 1);
+      gear(9 + 11.2, -3.5, 4.4, 8, -1);
+
+    } else {
+      // DIGITAL ASSETS — a vault: ownership and value held, not traded
+      const box = new THREE.BoxGeometry(1, 1, 1);
+      add(box, new THREE.Vector3(0, 0, 0), new THREE.Vector3(22, 22, 15));            // body
+      add(box, new THREE.Vector3(0, 0, 7.8), new THREE.Vector3(17, 17, 1.0));         // door
+      for (let k = 0; k < 4; k++) {
+        const a = (k / 4) * Math.PI * 2 + Math.PI / 4;
+        add(box, new THREE.Vector3(Math.cos(a) * 7.4, Math.sin(a) * 7.4, 8.4),
+          new THREE.Vector3(1.7, 1.7, 1.1));                                          // bolts
+      }
+      const dial = new THREE.Group();
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(1, 0.13, 8, 48), mat);
+      rim.scale.setScalar(4.6);
+      dial.add(rim);
+      geos.add(rim.geometry);
+      for (let k = 0; k < 3; k++) {
+        const spoke = new THREE.Mesh(box, mat);
+        spoke.scale.set(9.0, 0.7, 0.7);
+        spoke.rotation.z = (k / 3) * Math.PI;
+        dial.add(spoke);
+      }
+      dial.position.set(0, 0, 9.0);
+      group.add(dial);
+      subs.push({ tick: (dt) => { dial.rotation.z -= dt * 0.5; } });
+
+      // held records, drifting just clear of the vault
+      for (let k = 0; k < 3; k++) {
+        const a = (k / 3) * Math.PI * 2;
+        const m = add(box, new THREE.Vector3(Math.cos(a) * 21, 0, Math.sin(a) * 21),
+          new THREE.Vector3(5.4, 0.9, 5.4), new THREE.Euler(0, a, 0));
+        subs.push({ tick: (dt, t) => { m.position.y = Math.sin(t * 0.7 + k * 2.1) * 5.5; } });
       }
     }
 

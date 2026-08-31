@@ -112,7 +112,8 @@ export class Director {
   scrollToApp(i) {
     const s = this.sections.find((x) => x.key === 's08');
     if (!s) return;
-    scrollTo({ top: s.top + s.travel * (0.10 + (i / 4) * 0.8), behavior: 'smooth' });
+    const AT = [0.22, 0.36, 0.50, 0.66, 0.90];   // measured, not assumed
+    scrollTo({ top: s.top + s.travel * (AT[i] ?? 0.5), behavior: 'smooth' });
   }
 
   // ── one frame of choreography ───────────────────────────────────────
@@ -248,7 +249,7 @@ export class Director {
 
     // ── 08 · one application at a time ──
     const p08 = map.s08 ?? -1;
-    const idx = clamp(Math.round(clamp(p08, 0, 1) * 4), 0, 4);
+    const idx = clamp(Math.round(this.world.state.appIndex), 0, this.apps.length - 1);
     if (idx !== this.last.appIdx) {
       this.last.appIdx = idx;
       for (let i = 0; i < this.apps.length; i++) this.apps[i].classList.toggle('is-on', i === idx);

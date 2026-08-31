@@ -1054,17 +1054,30 @@ body.no-webgl .quality { display: none; }
 
 .hoverlabel {
   position: fixed; top: 0; left: 0; z-index: 94;
-  padding: 6px 11px;
-  border: 1px solid var(--line-gold);
-  background: rgba(6,11,20,.72);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  font-family: var(--mono); font-size: .53rem; letter-spacing: .2em; color: var(--gold-hi);
+  padding: 9px 16px;
+  border: 1px solid rgba(240,182,66,.5);
+  background: rgba(6,11,20,.82);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 30px rgba(2,4,9,.55), 0 0 26px rgba(240,182,66,.10);
+  font-family: var(--mono);
+  font-size: clamp(.68rem, .82vw, .8rem);
+  font-weight: 500;
+  letter-spacing: .22em;
+  color: var(--gold-hi);
+  text-shadow: 0 0 16px rgba(240,182,66,.4);
   white-space: nowrap; pointer-events: none;
-  opacity: 0; transition: opacity .28s var(--ease);
+  opacity: 0;
+  transition: opacity .26s var(--ease);
 }
 .hoverlabel::before {
-  content: ''; position: absolute; right: 100%; top: 50%; width: 10px; height: 1px;
-  background: var(--line-gold);
+  content: ''; position: absolute; right: 100%; top: 50%; width: 16px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240,182,66,.7));
+}
+/* a small mark where the leader meets the label, matching the section rules */
+.hoverlabel::after {
+  content: ''; position: absolute; left: -2px; top: 50%; width: 5px; height: 5px;
+  margin-top: -2.5px; background: var(--gold-hi);
+  transform: rotate(45deg); box-shadow: 0 0 8px var(--gold-glow);
 }
 .hoverlabel.is-on { opacity: 1; }
 @media (pointer: coarse) { .hoverlabel { display: none; } }

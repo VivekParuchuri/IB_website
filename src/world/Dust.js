@@ -46,17 +46,19 @@ void main(){
     p = uCamPos + rel;
   }
 
+  // A gentle lean toward whatever is hovered. Pulling harder than this
+  // collapses the whole local field into one clump on the cursor.
   vec3 toA = uAttract.xyz - p;
   float d = length(toA);
-  float pull = uAttract.w * exp(-pow(d / 44.0, 2.0));
-  p += toA * pull * 0.4;
+  float pull = uAttract.w * exp(-pow(d / 26.0, 2.0));
+  p += toA * pull * 0.10;
 
   vTone  = aMeta.z;
   vBoost = pull;
   vW = p;
 
   vec4 mv = viewMatrix * vec4(p, 1.0);
-  gl_PointSize = aMeta.y * uPR * (190.0 / max(-mv.z, 1.0)) * (1.0 + pull * 1.6);
+  gl_PointSize = aMeta.y * uPR * (190.0 / max(-mv.z, 1.0)) * (1.0 + pull * 0.45);
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -77,8 +79,8 @@ void main(){
   if (d2 > 0.25) discard;
   float f = exp(-d2 * 9.0);
   float gold = step(0.86, vTone);
-  vec3 col = mix(uRim, uGold, gold) * (0.55 + 1.1 * f + vBoost);
-  float a = f * (0.22 + gold * 0.42 + vBoost * 0.7) * uOpacity * uReveal;
+  vec3 col = mix(uRim, uGold, gold) * (0.55 + 1.1 * f + vBoost * 0.45);
+  float a = f * (0.22 + gold * 0.42 + vBoost * 0.30) * uOpacity * uReveal;
   a *= fogAlpha(distance(cameraPosition, vW));
   if (a < 0.003) discard;
   gl_FragColor = vec4(col, a);

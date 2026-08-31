@@ -124,10 +124,10 @@ void main(){
   // camera is right up against the surface in section 03.
   float scan = exp(-pow(fract(vL.y * 0.24 - uTime * 0.10 + uSeed) - 0.5, 2.0) / 0.022) * 0.5;
 
-  float live = 0.28 + 0.56 * uActivate + uHover * 0.7;
+  float live = 0.28 + 0.56 * uActivate + uHover * 0.34;
   vec3 traceCol = mix(uGold, uGoldHi, min(1.0, flow * 0.9 + scan));
   col += traceCol * c * (0.16 + 0.95 * flow + scan * 0.6) * live;
-  col += uGoldHi * seam * (0.26 + 0.48 * uActivate + uHover * 0.7);
+  col += uGoldHi * seam * (0.26 + 0.48 * uActivate + uHover * 0.36);
 
   // interior light bleeding through the shell
   col += uGold * fres * c * 0.34 * live;
@@ -186,8 +186,8 @@ void main(){
   float fres = pow(1.0 - max(dot(N, toCam / max(dist,0.001)), 0.0), 2.6);
   float breathe = 0.75 + 0.25 * sin(uTime * 1.1);
   vec3 col = mix(uGold, uRed, uTamper);
-  float a = fres * (0.08 + 0.24 * uActivate + 0.28 * uHover) * breathe * fogAlpha(dist);
-  gl_FragColor = vec4(col * (1.0 + uHover), a);
+  float a = fres * (0.08 + 0.24 * uActivate + 0.15 * uHover) * breathe * fogAlpha(dist);
+  gl_FragColor = vec4(col * (1.0 + uHover * 0.35), a);
 }
 `;
 

@@ -36,7 +36,7 @@ scroll position ──┬─▶ CameraRig     → position · lookAt · fov · f
 | Floating vocabulary | `src/world/Glyphs.js` | Short tokens adrift among the structures — WEB-3, TRUST, HASH, PROOF, VERIFY, SECURE, LEDGER, SHA-256, CONSENSUS, IMMUTABLE, KEY, # — and the **IB LAB** wordmark as one entry among many. No currency or coin references. Set in Syncopate, rasterised once into a canvas atlas where each entry records its own tight sub-rect and aspect, so a `$` is not stretched to the width of a wordmark. Fades with altitude so nothing silhouettes against open sky, and fades up close so nothing looms. Edit the `ITEMS` table at the top of the file to change the words, sizes or how often each reads gold. |
 | Data particles | `src/world/Dust.js` | Two populations in one buffer: a drifting field that wraps endlessly around the viewer, and orbiters that gather around landmark structures. A hovered object becomes an attractor. |
 | Structures | `src/world/CircuitBlock.js` | The signature material — machined navy metal with triplanar gold circuitry flowing across it, a fresnel rim, and a tamper state that tears the surface into red static. |
-| Landmarks | `src/world/Landmarks.js` | The genesis block, the ledger hub, the anatomy block, the five-block chain, and five distinct application forms. |
+| Landmarks | `src/world/Landmarks.js` | The genesis block, the ledger hub, the anatomy block, the five-block chain, and five application forms built to read as their concept: a ledger tower, a traced container route, a credential card with a verification ring, a signed document driving meshed gears, and a vault with a turning dial. Which one the copy names is derived from the camera's own position, so the label can never disagree with what is centred in frame. |
 | The swarm | `src/world/NodeField.js` | A decentralised mesh with no centre. Nodes reveal outward as the camera pulls back; consensus travels through it as a spherical wave of gold. |
 | Camera | `src/world/CameraRig.js` | Keyframes are **real positions in the world**, anchored to a section and a fraction of its scroll, then critically damped so fast scrolling never becomes a jump cut. |
 | Grade | `src/world/Post.js` | Bloom, chromatic aberration, vignette, grain, and a navy-shadow / warm-highlight split. |
@@ -48,8 +48,10 @@ cut through a dense technological city rather than lines drawn on top of it.
 
 ## Interaction
 
-- **Hover any structure** — its circuitry activates, a label appears, and the
-  particle field is pulled toward the point you are pointing at.
+- **Hover any structure** — its circuitry lifts, a label appears, and the
+  particle field leans gently toward the point you are pointing at. The lean
+  is deliberately slight: pulling harder collapses the local field into a
+  clump on the cursor and buries the object you are trying to look at.
 - **Section 03** runs real SHA-256 (`src/ui/sha256.js`) over a real transaction
   string. Edit the amount and the digest recomputes; the characters that
   changed are lifted out in white, and the mini-ledger below shows the

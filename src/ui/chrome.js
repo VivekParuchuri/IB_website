@@ -76,7 +76,7 @@ export class Cursor {
     this.ry = damp(this.ry, this.y, 14, dt);
     this.dot.style.transform = `translate(${this.x}px, ${this.y}px) translate(-50%,-50%)`;
     this.ring.style.transform = `translate(${this.rx}px, ${this.ry}px) translate(-50%,-50%)`;
-    this.label.style.transform = `translate(${this.rx + 22}px, ${this.ry - 8}px)`;
+    this.label.style.transform = `translate(${this.rx + 28}px, ${this.ry - 12}px)`;
   }
 }
 
