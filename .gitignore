@@ -1,0 +1,15 @@
+node_modules
+dist
+
+# dev capture output
+shots*
+final*
+verify*
+ab
+g
+g2
+m
+m2
+nogl*
+ship
+*.log
