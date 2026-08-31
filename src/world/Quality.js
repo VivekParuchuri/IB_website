@@ -8,17 +8,17 @@
 export const TIERS = {
   high: {
     tier: 'high',
-    blocks: 15000, dust: 14000, nodes: 2400, links: 4200, glyphs: 760,
+    blocks: 15000, dust: 14000, nodes: 2400, links: 4200, glyphs: 120,
     packetMul: 1, post: true, msaa: true, bloomScale: 0.5, maxDpr: 1.75,
   },
   medium: {
     tier: 'medium',
-    blocks: 8500, dust: 7000, nodes: 1500, links: 2400, glyphs: 440,
+    blocks: 8500, dust: 7000, nodes: 1500, links: 2400, glyphs: 80,
     packetMul: 0.7, post: true, msaa: false, bloomScale: 0.4, maxDpr: 1.35,
   },
   low: {
     tier: 'low',
-    blocks: 3800, dust: 2600, nodes: 700, links: 1000, glyphs: 170,
+    blocks: 3800, dust: 2600, nodes: 700, links: 1000, glyphs: 40,
     packetMul: 0.4, post: false, msaa: false, bloomScale: 0.35, maxDpr: 1.0,
   },
 };

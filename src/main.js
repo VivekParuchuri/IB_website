@@ -24,6 +24,18 @@ async function main() {
     return;
   }
 
+  // The wordmark atlas is rasterised to a canvas at construction time, so the
+  // face has to be resolved first or it silently falls back to a system font.
+  try {
+    await Promise.race([
+      Promise.all([
+        document.fonts.load('700 46px Syncopate'),
+        document.fonts.load('400 40px Syncopate'),
+      ]),
+      new Promise((r) => setTimeout(r, 2500)),
+    ]);
+  } catch { /* proceed with the fallback stack */ }
+
   await boot.step('GENERATING LANDSCAPE', 0.34);
 
   let world;

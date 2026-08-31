@@ -267,12 +267,12 @@ export class World {
       if (v === undefined || v < -0.4 || v > 1.4) return 0;
       return smoothstep(-0.35, 0.15, v) * (1 - smoothstep(0.85, 1.35, v));
     };
-    // dense where the story is about cryptography, sparse in the wide shots
-    // where the landscape itself is the subject
+    // A steady, quiet presence — it lifts a little in the close passages and
+    // thins in the wide shots, but never becomes a field of text.
     const wide = smoothstep(0.74, 0.98, this.scrollT);
     this.glyphs.uniforms.uOpacity.value = damp(
       this.glyphs.uniforms.uOpacity.value,
-      (0.46 + 0.85 * Math.max(nearG('s02'), nearG('s03'), nearG('s07'))) * (1 - 0.62 * wide),
+      (0.5 + 0.3 * Math.max(nearG('s02'), nearG('s03'), nearG('s07'))) * (1 - 0.5 * wide),
       2, dt
     );
 
